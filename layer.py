@@ -1,21 +1,21 @@
-
 import numpy
 import theano
 from theano import tensor as T
+
 
 class Layer(object):
     """
      A general base layer class for neural networks.
     """
     def __init__(self,
-        input,
-        n_in,
-        n_out,
-        activation=T.nnet.sigmoid,
-        sparse_initialize=False,
-        num_pieces=1,
-        non_zero_units=25,
-        rng=None):
+                 input,
+                 n_in,
+                 n_out,
+                 activation=T.nnet.sigmoid,
+                 sparse_initialize=False,
+                 num_pieces=1,
+                 non_zero_units=25,
+                 rng=None):
 
         self.num_pieces = num_pieces
         self.input = input
@@ -46,20 +46,20 @@ class Layer(object):
             self.W = theano.shared(value=W_values, name='W', borrow=True)
 
         if self.b is None:
-            b_values = numpy.zeros((self.n_out/self.num_pieces), dtype=theano.config.floatX)
+            b_values = numpy.zeros((self.n_out / self.num_pieces), dtype=theano.config.floatX)
             self.b = theano.shared(value=b_values, name='b', borrow=True)
         # parameters of the model
         self.params = [self.W, self.b]
 
     def sparse_initialize_weights(self):
-        #Implement the sparse initialization technique as decribed in 2010 Martens.
+        # Implement the sparse initialization technique as decribed in 2010 Martens.
         W = []
-        mu, sigma = 0, 1/self.non_zero_units
+        mu, sigma = 0, 1 / self.non_zero_units
 
         for i in range(self.n_in):
             row = numpy.zeros(self.n_out)
             non_zeros = self.rng.normal(mu, sigma, self.non_zero_units)
-            #non_zeros /= non_zeros.sum()
+            # non_zeros /= non_zeros.sum()
             non_zero_idxs = self.rng.permutation(self.n_out)[0:self.non_zero_units]
             for j in range(self.non_zero_units):
                 row[non_zero_idxs[j]] = non_zeros[j]
@@ -67,22 +67,23 @@ class Layer(object):
         W = numpy.asarray(W, dtype=theano.config.floatX)
         return W
 
+
 class AEHiddenLayer(Layer):
 
     def __init__(self,
-            input,
-            n_in,
-            n_out,
-            n_in_dec=None,
-            n_out_dec=None,
-            W=None,
-            b=None,
-            num_pieces=1,
-            bhid=None,
-            activation=T.nnet.sigmoid,
-            sparse_initialize=False,
-            tied_weights=True,
-            rng=None):
+                 input,
+                 n_in,
+                 n_out,
+                 n_in_dec=None,
+                 n_out_dec=None,
+                 W=None,
+                 b=None,
+                 num_pieces=1,
+                 bhid=None,
+                 activation=T.nnet.sigmoid,
+                 sparse_initialize=False,
+                 tied_weights=True,
+                 rng=None):
         """
         Typical hidden layer of a MLP: units are fully-connected and have
         sigmoidal activation function. Weight matrix W is of shape (n_in,n_out)
@@ -111,12 +112,12 @@ class AEHiddenLayer(Layer):
             rng = numpy.random.RandomState()
 
         super(AEHiddenLayer, self).__init__(input,
-                n_in,
-                n_out,
-                num_pieces=num_pieces,
-                activation=activation,
-                sparse_initialize=sparse_initialize,
-                rng=rng)
+                                            n_in,
+                                            n_out,
+                                            num_pieces=num_pieces,
+                                            activation=activation,
+                                            sparse_initialize=sparse_initialize,
+                                            rng=rng)
 
         self.reset_layer()
 
@@ -131,7 +132,7 @@ class AEHiddenLayer(Layer):
             if n_in_dec is not None:
                 b_values = numpy.zeros((n_out_dec), dtype=theano.config.floatX)
             else:
-                b_values = numpy.zeros((self.n_out/num_pieces), dtype=theano.config.floatX)
+                b_values = numpy.zeros((self.n_out / num_pieces), dtype=theano.config.floatX)
 
             self.b_prime = theano.shared(value=b_values, name='b_prime')
 
@@ -162,12 +163,12 @@ class AEHiddenLayer(Layer):
 
     def setup_outputs(self, input):
         lin_output = T.dot(input, self.W) + self.b
-        self.output = (lin_output if self.activation is None
-                else self.activation(lin_output))
+        self.output = (lin_output if self.activation is None else self.activation(lin_output))
 
     def get_outputs(self, input):
         self.setup_outputs(input)
         return self.output
+
 
 class HiddenLayer(Layer):
 
@@ -212,12 +213,12 @@ class HiddenLayer(Layer):
 
     def setup_outputs(self, input):
         lin_output = T.dot(input, self.W) + self.b
-        self.output = (lin_output if self.activation is None
-                else self.activation(lin_output))
+        self.output = (lin_output if self.activation is None else self.activation(lin_output))
 
     def get_outputs(self, input):
         self.setup_outputs(input)
         return self.output
+
 
 class LogisticRegressionLayer(Layer):
     """
@@ -240,8 +241,7 @@ class LogisticRegressionLayer(Layer):
                       which the labels lie
         """
         self.activation = T.nnet.sigmoid
-        super(LogisticRegressionLayer, self).__init__(input,
-        n_in, n_out, self.activation, rng)
+        super(LogisticRegressionLayer, self).__init__(input, n_in, n_out, self.activation, rng)
 
         self.reset_layer()
 
@@ -264,7 +264,7 @@ class LogisticRegressionLayer(Layer):
             # symbolic form
             self.y_decision = T.argmax(self.p_y_given_x, axis=1)
         else:
-            #If the probability is greater than 0.5 assign to the class 1
+            # If the probability is greater than 0.5 assign to the class 1
             # otherwise it is 0. Which can also be interpreted as check if
             # p(y=1|x)>threshold.
             self.y_decision = T.gt(T.flatten(self.p_y_given_x), threshold)
@@ -343,7 +343,7 @@ class LogisticRegressionLayer(Layer):
         else:
             y_decision = numpy.argmax(p_y_given_x, axis=1)
         for i in range(y.shape[0]):
-            self.conf_mat[y[i]][y_decision[i]] +=1
+            self.conf_mat[y[i]][y_decision[i]] += 1
 
     def errors(self, y):
         """Return a float representing the number of errors in the minibatch
@@ -357,7 +357,7 @@ class LogisticRegressionLayer(Layer):
         # check if y has same dimension of y_decision
         if y.ndim != self.y_decision.ndim:
             raise TypeError('y should have the same shape as self.y_decision',
-                    ('y', y.type, 'y_decision', self.y_decision.type))
+                            ('y', y.type, 'y_decision', self.y_decision.type))
             # check if y is of the correct datatype
         if y.dtype.startswith('int') or y.dtype.startswith('uint'):
             # the T.neq operator returns a vector of 0s and 1s, where 1
@@ -378,7 +378,7 @@ class LogisticRegressionLayer(Layer):
         # check if y has same dimension of y_decision
         if y.ndim != self.y_decision.ndim:
             raise TypeError('y should have the same shape as self.y_decision',
-                    ('y', y.type, 'y_decision', self.y_decision.type))
+                            ('y', y.type, 'y_decision', self.y_decision.type))
             # check if y is of the correct datatype
         if y.dtype.startswith('int') or y.dtype.startswith('uint'):
             # the T.neq operator returns a vector of 0s and 1s, where 1
@@ -399,7 +399,7 @@ class LogisticRegressionLayer(Layer):
         # check if y has same dimension of y_decision
         if y.ndim != self.y_decision.ndim:
             raise TypeError('y should have the same shape as self.y_decision',
-                    ('y', y.type, 'y_decision', self.y_decision.type))
+                            ('y', y.type, 'y_decision', self.y_decision.type))
             # check if y is of the correct datatype
         if y.dtype.startswith('int') or y.dtype.startswith('uint'):
             # the T.neq operator returns a vector of 0s and 1s, where 1

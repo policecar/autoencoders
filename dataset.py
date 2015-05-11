@@ -10,11 +10,11 @@ class Dataset(object):
     def __init__(self, is_binary=False):
         self.is_binary = is_binary
 
-        #Examples
+        # Examples
         self.Xtrain = None
         self.Xtest = None
 
-        #Labels
+        # Labels
         self.Ytrain = None
         self.Ytest = None
 
@@ -32,7 +32,7 @@ class Dataset(object):
         return data
 
     def binarize_labels(self, labels=None):
-        #Largest label is for the images without different object.
+        # Largest label is for the images without different object.
         last_lbl = np.max(labels)
         binarized_lbls = []
         if self.is_binary:
@@ -55,20 +55,20 @@ class Dataset(object):
         self.Xtest_pre = data[2][ntrain:]
 
         if train_split_scale != 0.0:
-            self.Ytrain = np.array(self.binarize_labels(data[1][:ntrain].flatten()) \
-            if self.is_binary else data[1][:ntrain].flatten())
+            self.Ytrain = np.array(self.binarize_labels(data[1][:ntrain].flatten())
+                                   if self.is_binary else data[1][:ntrain].flatten())
 
         if train_split_scale != 1.0:
-            self.Ytest = np.array(self.binarize_labels(data[1][ntrain:].flatten()) \
-            if self.is_binary else data[1][ntrain:].flatten())
+            self.Ytest = np.array(self.binarize_labels(data[1][ntrain:].flatten())
+                                  if self.is_binary else data[1][ntrain:].flatten())
 
     def comp_sparsity(self):
         num_sparse_els = 0
         for el in self.Xtrain.flatten():
             if el == 0:
-                num_sparse_els+=1
+                num_sparse_els += 1
         for el in self.Xtest.flatten():
             if el == 0:
-                num_sparse_els+=1
-        self.sparsity = (num_sparse_els/self.n_examples)
+                num_sparse_els += 1
+        self.sparsity = (num_sparse_els / self.n_examples)
         return self.sparsity

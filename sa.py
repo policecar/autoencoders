@@ -6,22 +6,22 @@ import numpy
 
 from ae import Autoencoder, CostType
 
-#Contractive Autoencoder implementation.
+
 class SparseAutoencoder(Autoencoder):
 
     def __init__(self,
-            input,
-            nvis,
-            nhid,
-            rnd=None,
-            theano_rng=None,
-            bhid=None,
-            cost_type=CostType.CrossEntropy,
-            bvis=None):
+                 input,
+                 nvis,
+                 nhid,
+                 rnd=None,
+                 theano_rng=None,
+                 bhid=None,
+                 cost_type=CostType.CrossEntropy,
+                 bvis=None):
 
         # create a Theano random generator that gives symbolic random values
         super(SparseAutoencoder, self).__init__(input, nvis, nhid, rnd, bhid, cost_type, bvis)
-        if not theano_rng :
+        if not theano_rng:
             theano_rng = RandomStreams(rnd.randint(2 ** 30))
         self.theano_rng = theano_rng
 
@@ -33,8 +33,8 @@ class SparseAutoencoder(Autoencoder):
     def kl_divergence(self, p, p_hat):
         term1 = p * T.log(p)
         term2 = p * T.log(p_hat)
-        term3 = (1-p) * T.log(1 - p)
-        term4 = (1-p) * T.log(1 - p_hat)
+        term3 = (1 - p) * T.log(1 - p)
+        term4 = (1 - p) * T.log(1 - p_hat)
         return term1 - term2 + term3 - term4
 
     def sparsity_penalty(self, h, sparsity_level=0.05, sparse_reg=1e-3, batch_size=-1):

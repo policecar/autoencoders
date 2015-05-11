@@ -6,25 +6,25 @@ import numpy
 from ae import Autoencoder, CostType, Nonlinearity
 from collections import OrderedDict
 
-#Contractive Autoencoder implementation.
+
 class ContractiveAutoencoder(Autoencoder):
 
     def __init__(self,
-            input,
-            nvis,
-            nhid,
-            rnd=None,
-            theano_rng=None,
-            bhid=None,
-            sigma=0.06,
-            nonlinearity=Nonlinearity.SIGMOID,
-            cost_type=CostType.MeanSquared,
-            bvis=None):
+                 input,
+                 nvis,
+                 nhid,
+                 rnd=None,
+                 theano_rng=None,
+                 bhid=None,
+                 sigma=0.06,
+                 nonlinearity=Nonlinearity.SIGMOID,
+                 cost_type=CostType.MeanSquared,
+                 bvis=None):
         self.sigma = sigma
         # create a Theano random generator that gives symbolic random values
         super(ContractiveAutoencoder, self).__init__(input, nvis, nhid, rnd, bhid, cost_type,
-                nonlinearity=nonlinearity, sparse_initialize=True, bvis=bvis)
-        if not theano_rng :
+                                                     nonlinearity=nonlinearity, sparse_initialize=True, bvis=bvis)
+        if not theano_rng:
             theano_rng = RandomStreams(rnd.randint(2 ** 30))
         self.theano_rng = theano_rng
 
@@ -71,15 +71,15 @@ class ContractiveAutoencoder(Autoencoder):
             s = hn * (1. - hn)
             jj = ww * s.dimshuffle(0, 'x', 1) * s.dimshuffle(0, 1, 'x')
             alpha = self.srng.normal(size=hn.shape,
-                    avg=0.,
-                    std=self.sigma,
-                    dtype=theano.config.floatX)
+                                     avg=0.,
+                                     std=self.sigma,
+                                     dtype=theano.config.floatX)
 
             delta = (alpha.dimshuffle(0, 1, 'x') * jj).sum(1)
 
             zn = self.decode(hn + delta)
             hn = self.encode(zn)
-            #zn2 = self.decode(hn)
+            # zn2 = self.decode(hn)
             samples.append(zn.eval())
         return samples
 

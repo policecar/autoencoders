@@ -6,46 +6,47 @@ import numpy
 
 from ae import Autoencoder, CostType, Nonlinearity
 
+
 class DenoisingAutoencoder(Autoencoder):
 
     def __init__(self,
-            input,
-            nvis,
-            nhid,
-            rnd=None,
-            theano_rng=None,
-            bhid=None,
-            cost_type=CostType.MeanSquared,
-            momentum=1,
-            L1_reg=-1,
-            L2_reg=-1,
-            sparse_initialize=False,
-            nonlinearity=Nonlinearity.TANH,
-            bvis=None,
-            tied_weights=True):
+                 input,
+                 nvis,
+                 nhid,
+                 rnd=None,
+                 theano_rng=None,
+                 bhid=None,
+                 cost_type=CostType.MeanSquared,
+                 momentum=1,
+                 L1_reg=-1,
+                 L2_reg=-1,
+                 sparse_initialize=False,
+                 nonlinearity=Nonlinearity.TANH,
+                 bvis=None,
+                 tied_weights=True):
 
         # create a Theano random generator that gives symbolic random values
         super(DenoisingAutoencoder, self).__init__(input,
-                nvis,
-                nhid,
-                rnd,
-                bhid,
-                cost_type,
-                momentum,
-                L1_reg=L1_reg,
-                L2_reg=L2_reg,
-                sparse_initialize=sparse_initialize,
-                nonlinearity=nonlinearity,
-                bvis=bvis,
-                tied_weights=tied_weights)
+                                                   nvis,
+                                                   nhid,
+                                                   rnd,
+                                                   bhid,
+                                                   cost_type,
+                                                   momentum,
+                                                   L1_reg=L1_reg,
+                                                   L2_reg=L2_reg,
+                                                   sparse_initialize=sparse_initialize,
+                                                   nonlinearity=nonlinearity,
+                                                   bvis=bvis,
+                                                   tied_weights=tied_weights)
 
-        if not theano_rng :
+        if not theano_rng:
             theano_rng = RandomStreams(rnd.randint(2 ** 30))
         self.theano_rng = theano_rng
 
     def corrupt_input(self, in_data, corruption_level):
-        return self.theano_rng.binomial(self.x.shape, n=1, p=1-corruption_level,
-                dtype=theano.config.floatX) * self.x
+        return self.theano_rng.binomial(self.x.shape, n=1, p=1 - corruption_level,
+                                        dtype=theano.config.floatX) * self.x
 
     def get_reconstructed_images(self, data):
         h = self.encode(x_in=data)
@@ -83,8 +84,8 @@ class DenoisingAutoencoder(Autoencoder):
         corrupted_input = self.corrupt_input(data_shared, corruption_level)
 
         (cost, updates) = self.get_sgd_updates(learning_rate, lr_scaler=lr_scaler, batch_size=batch_size,
-                sparsity_level=sparsity_level,
-                sparse_reg=sparse_reg, x_in=corrupted_input)
+                                               sparsity_level=sparsity_level,
+                                               sparse_reg=sparse_reg, x_in=corrupted_input)
 
         train_ae = theano.function([index],
                                    cost,
