@@ -7,7 +7,7 @@ import numpy
 from pylearn2.datasets.preprocessing import Standardize, LeCunLCN, GlobalContrastNormalization
 from pylearn2.datasets.tfd import TFD
 
-import cPickle as  pkl
+import pickle as  pkl
 theano.subtensor_merge_bug=False
 
 if __name__ == "__main__":
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     input = T.matrix("X", dtype=theano.config.floatX)
     tfd_ds = TFD("unlabeled")
 
-    print "TFD shape: ", tfd_ds.X.shape
+    print(("TFD shape: ", tfd_ds.X.shape))
     gcn = GlobalContrastNormalization()
     standardizer = Standardize()
     lcn = LeCunLCN(img_shape=(48, 48), channels=[0])

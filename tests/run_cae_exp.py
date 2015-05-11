@@ -4,7 +4,7 @@ from ca import ContractiveAutoencoder
 import theano
 #import theano.tensor as T
 import numpy
-import cPickle as  pkl
+import pickle as  pkl
 
 cae_fhdlr = open("cae_data.pkl", 'rb')
 mnist_fhdlr = open("/data/lisa/data/mnist/mnist_all.pickle", 'rb')

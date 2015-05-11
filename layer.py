@@ -1,4 +1,4 @@
-from __future__ import division
+
 import numpy
 import theano
 from theano import tensor as T
@@ -56,12 +56,12 @@ class Layer(object):
         W = []
         mu, sigma = 0, 1/self.non_zero_units
 
-        for i in xrange(self.n_in):
+        for i in range(self.n_in):
             row = numpy.zeros(self.n_out)
             non_zeros = self.rng.normal(mu, sigma, self.non_zero_units)
             #non_zeros /= non_zeros.sum()
             non_zero_idxs = self.rng.permutation(self.n_out)[0:self.non_zero_units]
-            for j in xrange(self.non_zero_units):
+            for j in range(self.non_zero_units):
                 row[non_zero_idxs[j]] = non_zeros[j]
             W.append(row)
         W = numpy.asarray(W, dtype=theano.config.floatX)
@@ -342,7 +342,7 @@ class LogisticRegressionLayer(Layer):
             y_decision = y_decision.astype(int)
         else:
             y_decision = numpy.argmax(p_y_given_x, axis=1)
-        for i in xrange(y.shape[0]):
+        for i in range(y.shape[0]):
             self.conf_mat[y[i]][y_decision[i]] +=1
 
     def errors(self, y):

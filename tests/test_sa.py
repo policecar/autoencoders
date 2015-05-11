@@ -5,7 +5,7 @@ import numpy
 
 if __name__=="__main__":
     fname = "/data/lisa/data/mnist/mnist_all.pickle"
-    print "Started training SA on data %s " % (fname)
+    print(("Started training SA on data %s " % (fname)))
     ds = Dataset()
     ds.setup_dataset(data_path=fname, train_split_scale=0.8)
     x_data = ds.Xtrain

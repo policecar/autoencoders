@@ -207,8 +207,8 @@ class Autoencoder(object):
         samples = []
         sample = x
         samples.append(x)
-        for i in xrange(n_steps):
-            print "Sample %d..." % i
+        for i in range(n_steps):
+            print(("Sample %d..." % i))
             sampler = self.sample_one_step(sample, sigma)
             sample = sampler.eval()
             samples.append(sample)
@@ -261,15 +261,15 @@ class Autoencoder(object):
                                        }
                                    )
 
-        print "Started the training."
+        print("Started the training.")
         ae_costs = []
 
-        for epoch in xrange(n_epochs):
-            print "Training at epoch %d" % epoch
-            for batch_index in xrange(n_batches):
+        for epoch in range(n_epochs):
+            print(("Training at epoch %d" % epoch))
+            for batch_index in range(n_batches):
                 ae_costs.append(train_ae(batch_index))
-            print "Training at epoch %d, %f" % (epoch, numpy.mean(ae_costs))
+            print(("Training at epoch %d, %f" % (epoch, numpy.mean(ae_costs))))
 
-        print "Saving files..."
+        print("Saving files...")
         numpy.save(weights_file, self.params[0].get_value())
         return ae_costs

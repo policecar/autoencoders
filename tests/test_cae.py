@@ -4,12 +4,12 @@ import theano
 import theano.tensor as T
 import numpy
 
-import cPickle as  pkl
+import pickle as  pkl
 theano.subtensor_merge_bug=False
 
 if __name__=="__main__":
     fname = "/data/lisa/data/mnist/mnist_all.pickle"
-    print "Started training CA on data %s " % (fname)
+    print(("Started training CA on data %s " % (fname)))
     ds = Dataset()
     data = ds._get_data(fname)
     x_data = numpy.asarray(data[0][0:42000], dtype=theano.config.floatX)

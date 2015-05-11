@@ -1,6 +1,6 @@
 import PIL.Image
 import numpy
-from utils import tile_raster_images
+from .utils import tile_raster_images
 import pickle as pkl
 
 data = numpy.load("/u/gulcehrc/Documents/Papers/lisa_lab/articles/2012/intermediate_targets/prmlp_1stlayer.npy")

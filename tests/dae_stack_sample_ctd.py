@@ -3,7 +3,7 @@ from dataset import Dataset
 import theano.tensor as T
 import theano
 import numpy
-import cPickle as  pkl
+import pickle as  pkl
 
 def standardize(data):
     """

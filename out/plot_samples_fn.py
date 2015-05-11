@@ -8,7 +8,7 @@ def plot_samples(samples, no_of_rows, no_of_cols, pno=1, n_samples=30, img_shp=(
         pylab.axis("off")
         pylab.subplot(no_of_rows, no_of_cols, pno)
         pylab.imshow(samples[pno].reshape(img_shp))
-        print pno
+        print(pno)
         plot_samples(samples, no_of_rows, no_of_cols, pno+1, n_samples, img_shp)
 
 if __name__=="__main__":

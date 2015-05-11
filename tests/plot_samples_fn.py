@@ -1,6 +1,6 @@
 import numpy
 import pylab
-import cPickle as pkl
+import pickle as pkl
 
 def colored_axis(axes, color="red"):
     axes.spines['bottom'].set_color(color)

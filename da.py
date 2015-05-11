@@ -54,10 +54,10 @@ class DenoisingAutoencoder(Autoencoder):
 
     def debug_grads(self, data):
         gfn = theano.function([self.x], self.gparams[0])
-        print "gradients:"
-        print gfn(data)
-        print "params:"
-        print self.hidden.W.get_value()
+        print("gradients:")
+        print((gfn(data)))
+        print("params:")
+        print((self.hidden.W.get_value()))
 
     def fit(self,
             data=None,
@@ -91,25 +91,25 @@ class DenoisingAutoencoder(Autoencoder):
                                    updates=updates,
                                    givens={self.x: data_shared[index * batch_size: (index + 1) * batch_size]})
 
-        print "Started the training."
+        print("Started the training.")
         ae_costs = []
         batch_index = 0
-        for epoch in xrange(n_epochs):
+        for epoch in range(n_epochs):
             idxs = numpy.arange(n_batches)
             numpy.random.shuffle(idxs)
-            print "Training at epoch %d" % epoch
+            print(("Training at epoch %d" % epoch))
             for batch_index in idxs:
                 ae_costs.append(train_ae(batch_index))
                 if False:
-                    print "Cost: ", ae_costs[-1]
+                    print(("Cost: ", ae_costs[-1]))
                     self.debug_grads(data_shared.get_value()[batch_index * batch_size: (batch_index + 1) * batch_size])
-            print "Training at epoch %d, %f" % (epoch, numpy.mean(ae_costs))
+            print(("Training at epoch %d, %f" % (epoch, numpy.mean(ae_costs))))
 
         if weights_file is not None:
-            print "Saving weights..."
+            print("Saving weights...")
             numpy.save(weights_file, self.params[0].get_value())
         if recons_img_file is not None:
-            print "Saving reconstructed images..."
+            print("Saving reconstructed images...")
             x_rec = self.get_reconstructed_images(data_shared)
             numpy.save(recons_img_file, x_rec)
         return ae_costs

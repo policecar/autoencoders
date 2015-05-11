@@ -1,6 +1,6 @@
 import PIL.Image
 import numpy
-from utils import tile_raster_images
+from .utils import tile_raster_images
 import pickle as pkl
 
 #data = pkl.load(open("./online_smlp_lbfgs_std_adadelta.pkl"))
